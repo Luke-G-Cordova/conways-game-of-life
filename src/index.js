@@ -10,7 +10,20 @@ let pause = true;
 for (let y = 0; y <= canvas.width / cellSize; y++) {
   for (let x = 0; x <= canvas.height / cellSize; x++) {
     if (grid[y] != null) {
-      grid[y].push(0);
+      if (
+        x == 900 / 2 / cellSize ||
+        y == 900 / 2 / cellSize ||
+        y == x ||
+        y == x + 1 ||
+        y == x - 1 ||
+        Math.max(x, y) + Math.min(x, y) == 900 / cellSize ||
+        Math.max(x, y) + Math.min(x, y) == 900 / cellSize + 1 ||
+        Math.max(x, y) + Math.min(x, y) == 900 / cellSize - 1
+      ) {
+        grid[y].push(1);
+      } else {
+        grid[y].push(0);
+      }
       gridOrigin[y].push(0);
     } else {
       grid.push([]);
@@ -84,12 +97,21 @@ const drawGrid = () => {
       if (val === 1) {
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      // ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
     });
   });
 };
 
-let interval = setInterval(loop, 50);
+function merge(piece, mouseY, mouseX) {
+  piece.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value != 0) {
+        grid[y + mouseY][x + mouseX] = value;
+      }
+    });
+  });
+}
+let interval = setInterval(loop, 100);
 window.addEventListener('keypress', (e) => {
   if (e.key === 'a') {
     pause = !pause;
@@ -100,7 +122,12 @@ window.addEventListener('mousedown', (e) => {
   let box = canvas.getBoundingClientRect();
   let mouseX = Math.floor((e.clientX - box.x) / cellSize);
   let mouseY = Math.floor((e.clientY - box.y) / cellSize);
-  grid[mouseY][mouseX] = grid[mouseY][mouseX] === 1 ? 0 : 1;
+  // merge(
+  //   floatGenerator,
+  //   Math.round(mouseY - floatGenerator.length / 2),
+  //   Math.round(mouseX - floatGenerator[0].length / 2)
+  // );
+  // grid[mouseY][mouseX] = grid[mouseY][mouseX] === 1 ? 0 : 1;
   window.onmousemove = (ev) => {
     let box = canvas.getBoundingClientRect();
     let mouseX = Math.floor((ev.clientX - box.x) / cellSize);
@@ -112,3 +139,58 @@ window.addEventListener('mousedown', (e) => {
     window.onmouseup = null;
   };
 });
+
+var floater = [
+  [0, 1, 0],
+  [0, 0, 1],
+  [1, 1, 1],
+];
+var floatGenerator = [
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
+  ],
+  [
+    0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+];
+// for (let i = 0; i < 3; i++) {
+//   merge(floatGenerator, i * 25 + 10, 10);
+// }
